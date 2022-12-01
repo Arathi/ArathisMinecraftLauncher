@@ -11,14 +11,14 @@ class AMCLApp extends StatefulWidget {
 
 enum Page {
   home,
-  account,
-  game,
-  download,
-  setting,
+  accounts,
+  games,
+  downloads,
+  settings,
 }
 
 class AMCLState extends State<AMCLApp> {
-  Page page = Page.home;
+  Page page = Page.downloads;
 
   Map<String, LauncherUser> users = <String, LauncherUser>{};
   String? currentUUID;
@@ -64,7 +64,7 @@ class AMCLState extends State<AMCLApp> {
 
   Widget? buildPage() {
     if (page == Page.home) return HomePage(this);
-    if (page == Page.download) return DownloadPage(this);
+    if (page == Page.downloads) return DownloadPage(this);
     return null;
   }
 
