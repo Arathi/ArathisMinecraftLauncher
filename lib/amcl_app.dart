@@ -1,4 +1,5 @@
-import 'package:amcl/pages/home_page.dart';
+import 'pages/home_page.dart';
+import 'pages/download_page.dart';
 import 'package:flutter/material.dart';
 
 class AMCLApp extends StatefulWidget {
@@ -9,15 +10,15 @@ class AMCLApp extends StatefulWidget {
 }
 
 enum Page {
-  Home,
-  Account,
-  Game,
-  Download,
-  Setting,
+  home,
+  account,
+  game,
+  download,
+  setting,
 }
 
 class AMCLState extends State<AMCLApp> {
-  Page page = Page.Home;
+  Page page = Page.home;
 
   Map<String, LauncherUser> users = <String, LauncherUser>{};
   String? currentUUID;
@@ -62,7 +63,8 @@ class AMCLState extends State<AMCLApp> {
   }
 
   Widget? buildPage() {
-    if (page == Page.Home) return HomePage(this);
+    if (page == Page.home) return HomePage(this);
+    if (page == Page.download) return DownloadPage(this);
     return null;
   }
 
