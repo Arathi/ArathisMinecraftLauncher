@@ -251,12 +251,10 @@ class ModManagerState extends State<ModManagerTab> {
             buildDropdownMenu<int, Category>(
               _categories,
               categoryId,
-              (cat) {
-                return DropdownMenuItem<int>(
-                  value: cat.id,
-                  child: Text(cat.name),
-                );
-              },
+              (cat) => DropdownMenuItem<int>(
+                value: cat.id,
+                child: Text(cat.name),
+              ),
               _onCategoryIdChanged,
             ),
           ],
@@ -268,12 +266,10 @@ class ModManagerState extends State<ModManagerTab> {
             buildDropdownMenu<int, VersionTypeInfo>(
               _versionTypes,
               gameVersionTypeId,
-              (vt) {
-                return DropdownMenuItem<int>(
-                  value: vt.id,
-                  child: Text(vt.name),
-                );
-              },
+              (vt) => DropdownMenuItem<int>(
+                value: vt.id,
+                child: Text(vt.name),
+              ),
               _onGameVersionTypeIdChanged,
             ),
             const SizedBox(width: 16),
@@ -347,6 +343,16 @@ class ModManagerState extends State<ModManagerTab> {
   }
 
   Widget buildResult(Mod mod) {
+    List<Widget> categoryIcons = <Widget>[];
+    for (var category in mod.categories) {
+      categoryIcons.add(
+        Container(
+          margin: const EdgeInsets.only(left: 2),
+          child: Image(image: NetworkImage(category.iconUrl), width: 32, height: 32)
+        )
+      );
+    }
+
     return Container(
       margin: const EdgeInsets.fromLTRB(0, 0, 10, 8),
       padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
@@ -355,19 +361,35 @@ class ModManagerState extends State<ModManagerTab> {
         color: const Color(0xCCEEEEEE),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(
-            Icons.image,
-            size: 32,
-          ),
+          Image(image: NetworkImage(mod.logo.url), width: 64, height: 64,),
           const SizedBox(width: 5),
-          Column(
+          Expanded(child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("${mod.mainAuthor.name}/${mod.name}"),
-              Text("${mod.summary}"),
+              Text("${mod.mainAuthor.name} / ${mod.name}"),
+              Text("#${mod.id} / @${mod.slug} 下载量：${mod.downloadCount}", style: const TextStyle(color: Colors.grey)),
+              Text(mod.summary, style: const TextStyle(color: Colors.grey)),
             ],
-          )
+          )),
+          const SizedBox(width: 5),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Row(children: [
+                ElevatedButton.icon(icon: const Icon(Icons.download), label: const Text("下载"), onPressed: () {}),
+                const SizedBox(width: 5),
+                ElevatedButton.icon(icon: const Icon(Icons.star), label: const Text("收藏"), onPressed: () {}),
+              ]),
+              
+              const SizedBox(height: 5),
+              Flex(
+                direction: Axis.horizontal,
+                children: categoryIcons,
+              )
+          ],),
         ],
       ),
     );
@@ -377,7 +399,6 @@ class ModManagerState extends State<ModManagerTab> {
     if (results.isEmpty) {
       return const Center(child: Text("未找到有效数据"));
     }
-
     List<Widget> resultWidgets = <Widget>[];
     for (Mod mod in results) {
       Widget resultWidget = buildResult(mod);
