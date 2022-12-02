@@ -48,6 +48,20 @@ class CurseForgeClient {
     }
   }
 
+  void parseData(
+    Response resp,
+    Function(Map<String, dynamic>) dataBuilder,
+  ) {
+    if (resp.statusCode != null && resp.statusCode == 200) {
+      if (resp.data is Map<String, dynamic>) {
+        var dataJson = resp.data["data"];
+        if (dataJson is Map<String, dynamic>) {
+          dataBuilder(dataJson);
+        }
+      }
+    }
+  }
+
   Future<List<Versions>> getVersions([int gameId = gameIdMinecraft]) async {
     var url = "$baseUrl/v1/games/$gameId/versions";
     var resp = await _dio.get(url, options: _options);
@@ -137,7 +151,7 @@ class CurseForgeClient {
     String? gameVersion,
     String? searchFilter,
     int? sortField,
-    int? sortOrder,
+    String? sortOrder,
     int? modLoaderType,
     int? gameVersionTypeId,
     String? slug,
@@ -166,11 +180,21 @@ class CurseForgeClient {
     return mods;
   }
 
-  // getMod() {}
+  Future<Mod?> getMod(int modId) async {
+    var url = "$baseUrl/v1/mods/$modId";
+    var resp = await _dio.get(url, options: _options);
+    Mod? mod;
+    parseData(resp, (json) => mod = Mod.fromJson(json));
+    return mod;
+  }
 
-  // Future<> getMods() {}
-
-  // getModFile() {}
+  Future<ModFile?> getModFile(int modId, int fileId) async {
+    var url = "$baseUrl/v1/mods/$modId/files/$fileId";
+    var resp = await _dio.get(url, options: _options);
+    ModFile? modFile;
+    parseData(resp, (json) => modFile = ModFile.fromJson(json));
+    return modFile;
+  }
 
   Future<List<ModFile>> getModFiles(
     int modId, {

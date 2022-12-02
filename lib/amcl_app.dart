@@ -1,4 +1,5 @@
 import 'pages/home_page.dart';
+import 'pages/accounts_page.dart';
 import 'pages/download_page.dart';
 import 'package:flutter/material.dart';
 
@@ -9,7 +10,7 @@ class AMCLApp extends StatefulWidget {
   State<StatefulWidget> createState() => AMCLState();
 }
 
-enum Page {
+enum AMCLPage {
   home,
   accounts,
   games,
@@ -18,7 +19,7 @@ enum Page {
 }
 
 class AMCLState extends State<AMCLApp> {
-  Page page = Page.downloads;
+  AMCLPage page = AMCLPage.accounts;
 
   Map<String, LauncherUser> users = <String, LauncherUser>{};
   String? currentUUID;
@@ -58,13 +59,14 @@ class AMCLState extends State<AMCLApp> {
     currentGameName = game.name;
   }
 
-  void setPage(Page page) {
+  void setPage(AMCLPage page) {
     setState(() => this.page = page);
   }
 
   Widget? buildPage() {
-    if (page == Page.home) return HomePage(this);
-    if (page == Page.downloads) return DownloadPage(this);
+    if (page == AMCLPage.home) return HomePage(this);
+    if (page == AMCLPage.accounts) return AccountsPage(this);
+    if (page == AMCLPage.downloads) return DownloadPage(this);
     return null;
   }
 
@@ -76,7 +78,15 @@ class AMCLState extends State<AMCLApp> {
         primarySwatch: Colors.blue,
         // backgroundColor: Colors.amber
       ),
-      home: Scaffold(body: buildPage()),
+      home: Scaffold(
+          body: Container(
+        decoration: const BoxDecoration(
+            image: DecorationImage(
+          image: AssetImage("assets/background.jpg"),
+          fit: BoxFit.cover,
+        )),
+        child: buildPage(),
+      )),
     );
   }
 }

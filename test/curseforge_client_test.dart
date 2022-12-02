@@ -4,7 +4,7 @@ import 'package:amcl/clients/curseforge/versions.dart';
 
 void main() async {
   var client = CurseForgeClient();
-  await testGetModFiles(client);
+  await testGetModFile(client);
 }
 
 Future testGetVersions(CurseForgeClient client) async {
@@ -39,6 +39,15 @@ Future testSearchMods(CurseForgeClient client) async {
   var mods = await client.searchMods(slug: "jei");
   for (var mod in mods) {
     print("模组信息：$mod");
+  }
+}
+
+Future testGetModFile(CurseForgeClient client) async {
+  int modId = 245755;
+  int fileId = 3830849;
+  var modFile = await client.getModFile(modId, fileId);
+  if (modFile != null) {
+    print(modFile);
   }
 }
 

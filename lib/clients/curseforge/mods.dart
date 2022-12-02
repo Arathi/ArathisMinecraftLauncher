@@ -1,47 +1,65 @@
 import 'categories.dart';
+import 'mod_files.dart';
 
 class Mod {
   late int id;
   late int gameId;
   late String name;
   late String slug;
-  // dynamic links;
+  late Map<String, String?> links;
   late String summary;
-  // dynamic status;
+  late int status;
   late int downloadCount;
-  // late bool isFeatured;
+  late bool isFeatured;
   late int primaryCategoryId;
   late List<Category> categories;
   int? classId;
-  late List<Author> authors;
-  late Asset logo;
-  // late List<dynamic> screenshots;
+  late List<ModAuthor> authors;
+  late ModAsset logo;
+  late List<ModAsset> screenshots;
   late int mainFileId;
-  // late List<dynamic> latestFiles;
-  // late List<dynamic> latestFilesIndexes;
+  late List<ModFile> latestFiles;
+  late List<FileIndex> latestFilesIndexes;
   late String dateCreated;
   late String dateModified;
   late String dateReleased;
   bool? allowModDistribution;
   late int gamePopularityRank;
   late bool isAvailable;
+  late int thumbsUpCount;
 
   Mod.fromJson(Map<String, dynamic> json) {
     id = json["id"] as int;
     gameId = json["gameId"] as int;
     name = json["name"] as String;
     slug = json["slug"] as String;
+    // links 见下方
     summary = json["summary"] as String;
+    status = json["status"] as int;
     downloadCount = json["downloadCount"] as int;
+    isFeatured = json["isFeatured"] as bool;
     primaryCategoryId = json["primaryCategoryId"] as int;
+    // categories 见下方
     classId = json["classId"] as int?;
+    // authors 见下方
+    // logo 见下方
+    // screenshots 见下方
     mainFileId = json["mainFileId"] as int;
+    // latestFiles 见下方
+    // latestFileIndexes 见下方
     dateCreated = json["dateCreated"] as String;
     dateModified = json["dateModified"] as String;
     dateReleased = json["dateReleased"] as String;
     allowModDistribution = json["allowModDistribution"] as bool?;
     gamePopularityRank = json["gamePopularityRank"] as int;
     isAvailable = json["isAvailable"] as bool;
+    thumbsUpCount = json["thumbsUpCount"] as int;
+
+    links = <String, String?>{};
+    var linksMap = json["links"] as Map;
+    for (var entry in linksMap.entries) {
+      links[entry.key] = entry.value as String?;
+    }
 
     categories = <Category>[];
     var list = json["categories"] as List;
@@ -52,22 +70,49 @@ class Mod {
       }
     }
 
-    authors = <Author>[];
+    authors = <ModAuthor>[];
     list = json["authors"] as List;
     for (var authorJson in list) {
       if (authorJson is Map<String, dynamic>) {
-        var author = Author.fromJson(authorJson);
+        var author = ModAuthor.fromJson(authorJson);
         authors.add(author);
       }
     }
 
     var logoJson = json["logo"];
     if (logoJson is Map<String, dynamic>) {
-      logo = Asset.fromJson(logoJson);
+      logo = ModAsset.fromJson(logoJson);
+    }
+
+    screenshots = <ModAsset>[];
+    list = json["screenshots"] as List;
+    for (var scrshotJson in list) {
+      if (scrshotJson is Map<String, dynamic>) {
+        var scrshot = ModAsset.fromJson(scrshotJson);
+        screenshots.add(scrshot);
+      }
+    }
+
+    latestFiles = <ModFile>[];
+    list = json["latestFiles"] as List;
+    for (var fileJson in list) {
+      if (fileJson is Map<String, dynamic>) {
+        var file = ModFile.fromJson(fileJson);
+        latestFiles.add(file);
+      }
+    }
+
+    latestFilesIndexes = <FileIndex>[];
+    list = json["latestFilesIndexes"] as List;
+    for (var idxJson in list) {
+      if (idxJson is Map<String, dynamic>) {
+        var idx = FileIndex.fromJson(idxJson);
+        latestFilesIndexes.add(idx);
+      }
     }
   }
 
-  Author get mainAuthor => authors.first;
+  ModAuthor get mainAuthor => authors.first;
 
   @override
   String toString() {
@@ -79,12 +124,12 @@ class Mod {
   }
 }
 
-class Author {
+class ModAuthor {
   late int id;
   late String name;
   late String url;
 
-  Author.fromJson(Map<String, dynamic> json) {
+  ModAuthor.fromJson(Map<String, dynamic> json) {
     id = json["id"] as int;
     name = json["name"] as String;
     url = json["url"] as String;
@@ -96,7 +141,7 @@ class Author {
   }
 }
 
-class Asset {
+class ModAsset {
   late int id;
   late int modId;
   late String title;
@@ -104,7 +149,7 @@ class Asset {
   late String thumbnailUrl;
   late String url;
 
-  Asset.fromJson(Map<String, dynamic> json) {
+  ModAsset.fromJson(Map<String, dynamic> json) {
     id = json["id"] as int;
     modId = json["modId"] as int;
     title = json["title"] as String;
@@ -116,5 +161,23 @@ class Asset {
   @override
   String toString() {
     return "$modId/$id: $title";
+  }
+}
+
+class FileIndex {
+  late String gameVersion;
+  late int fileId;
+  late String filename;
+  late int releaseType;
+  int? gameVersionTypeId;
+  int? modLoader;
+
+  FileIndex.fromJson(Map<String, dynamic> json) {
+    gameVersion = json["gameVersion"] as String;
+    fileId = json["fileId"] as int;
+    filename = json["filename"] as String;
+    releaseType = json["releaseType"] as int;
+    gameVersionTypeId = json["gameVersionTypeId"] as int?;
+    modLoader = json["modLoader"] as int?;
   }
 }

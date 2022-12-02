@@ -86,17 +86,10 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     String userName =
         (state.currentUser != null) ? state.currentUser!.name : "请创建或选择用户";
-    return Container(
-      decoration: const BoxDecoration(
-          image: DecorationImage(
-        image: AssetImage("assets/background.jpg"),
-        fit: BoxFit.cover,
-      )),
-      child: Row(children: [
-        MainMenu(state),
-        const SizedBox(width: 10),
-        Center(child: Text("欢迎，$userName")),
-      ]),
-    );
+    return Row(children: [
+      MainMenu(state),
+      const SizedBox(width: 10),
+      Center(child: Text("欢迎，$userName")),
+    ]);
   }
 }

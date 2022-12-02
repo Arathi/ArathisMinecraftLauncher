@@ -12,8 +12,19 @@ class DownloadPageMenu extends BaseMenu {
     return Container(
       width: 256,
       color: const Color(0x80FFFFFF),
-      padding: EdgeInsets.fromLTRB(16, 32, 16, 32),
+      padding: EdgeInsets.fromLTRB(16, 16, 16, 16),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(
+          children: [
+            IconButton(
+              onPressed: () => state.setPage(AMCLPage.home),
+              icon: const Icon(Icons.arrow_back),
+            ),
+            Text("下载"),
+          ],
+        ),
+        const SizedBox(height: 32),
+
         const Text("新游戏"),
         const Divider(),
         ClickableMenuItem.icon(
@@ -50,19 +61,13 @@ class DownloadPageMenu extends BaseMenu {
   }
 }
 
-enum DownloadTab {
-  games,
-  modPacks,
-  modManager,
-  resourcePacks,
-  worlds
-}
+enum DownloadTab { games, modPacks, modManager, resourcePacks, worlds }
 
 class DownloadPage extends StatefulWidget {
   AMCLState state;
 
   DownloadPage(this.state, {super.key});
-  
+
   @override
   State<StatefulWidget> createState() => DownloadPageState();
 }
@@ -81,19 +86,10 @@ class DownloadPageState extends State<DownloadPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-          image: DecorationImage(
-        image: AssetImage("assets/background.jpg"),
-        fit: BoxFit.cover,
-      )),
-      child: Row(children: [
-        DownloadPageMenu(widget.state),
-        const SizedBox(width: 10),
-        // Center(child: Text("下载")),
-        buildTab(),
-      ]),
-    );
+    return Row(children: [
+      DownloadPageMenu(widget.state),
+      const SizedBox(width: 10),
+      buildTab(),
+    ]);
   }
-  
 }

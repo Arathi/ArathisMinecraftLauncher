@@ -1,3 +1,5 @@
+import 'package:amcl/clients/curseforge_client.dart';
+
 class Category {
   late int id;
   late int gameId;
@@ -10,6 +12,12 @@ class Category {
   int? classId;
   int? parentCategoryId;
   int? displayIndex;
+
+  Category.test(this.id, this.name, this.slug)
+      : gameId = CurseForgeClient.gameIdMinecraft,
+        url = "",
+        iconUrl = "",
+        dateModified = "";
 
   Category.fromJson(Map<String, dynamic> json) {
     id = json["id"] as int;
