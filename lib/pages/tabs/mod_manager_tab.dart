@@ -112,6 +112,7 @@ class ModManagerState extends State<ModManagerTab> {
 
   void _onBtnSearchClick() {
     // 清空搜索结果
+    print("清空搜索结果");
     setState(() => results.clear());
 
     if (_keywords.isNotEmpty) {
@@ -121,23 +122,29 @@ class ModManagerState extends State<ModManagerTab> {
         if (keyword.startsWith("@") && keyword.length > 1) {
           // @slug
           var slug = keyword.substring(1);
+          print("搜索特定MOD：@$slug");
           _search(slug: slug);
         } else if (keyword.startsWith("#") && keyword.length > 1) {
           // #modId
           var modId = int.tryParse(keyword);
           if (modId != null) {
+            print("搜索特定MOD：#$modId");
             _search(modId: modId);
           }
         } else {
           // searchFilter
+          print("根据关键词搜索：$keyword");
           _search(searchFilter: keyword);
         }
       }
+    } else {
+      _search();
     }
   }
 
   void _search({String? searchFilter, String? slug, int? modId}) {
     if (modId == null) {
+      print("根据条件进行搜索");
       _cfapi
           .searchMods(
         classId: CurseForgeClient.classIdMods,
@@ -151,9 +158,11 @@ class ModManagerState extends State<ModManagerTab> {
         slug: slug,
       )
           .then((value) {
+        print("获取搜索结果${value.length}个");
         setState(() => results.addAll(value));
       });
     } else {
+      print("根据ID获取模组");
       _cfapi.getMod(modId).then((value) {
         setState(() {
           if (value != null) {
@@ -218,7 +227,7 @@ class ModManagerState extends State<ModManagerTab> {
   }
 
   Widget buildConditionForm() {
-    return Column(
+    var column = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // 关键字
@@ -326,17 +335,67 @@ class ModManagerState extends State<ModManagerTab> {
         ),
       ],
     );
+    return Container(
+      margin: const EdgeInsets.fromLTRB(0, 10, 10, 0),
+      padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5),
+        color: const Color(0xCCEEEEEE),
+      ),
+      child: column,
+    );
+  }
+
+  Widget buildResult(Mod mod) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(0, 0, 10, 8),
+      padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5),
+        color: const Color(0xCCEEEEEE),
+      ),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.image,
+            size: 32,
+          ),
+          const SizedBox(width: 5),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("${mod.mainAuthor.name}/${mod.name}"),
+              Text("${mod.summary}"),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget buildResults() {
+    if (results.isEmpty) {
+      return const Center(child: Text("未找到有效数据"));
+    }
+
+    List<Widget> resultWidgets = <Widget>[];
+    for (Mod mod in results) {
+      Widget resultWidget = buildResult(mod);
+      resultWidgets.add(resultWidget);
+    }
+    return ListView(children: resultWidgets);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: Column(
-      // mainAxisAlignment: MainAxisAlignment.start,
-      // crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
       children: [
         buildConditionForm(),
+        const SizedBox(height: 10),
+        Expanded(
+          child: buildResults(),
+        ),
       ],
-    ));
+    );
   }
 }

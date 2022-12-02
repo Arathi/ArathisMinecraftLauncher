@@ -11,7 +11,7 @@ class ModFile {
   late String fileDate;
   late int fileLength;
   late int downloadCount;
-  late String downloadUrl;
+  String? downloadUrl;
   late List<String> gameVersions;
   // sortableGameVersions;
   late List<FileDependency> dependencies;
@@ -35,7 +35,7 @@ class ModFile {
     fileDate = json["fileDate"] as String;
     fileLength = json["fileLength"] as int;
     downloadCount = json["downloadCount"] as int;
-    downloadUrl = json["downloadUrl"] as String;
+    downloadUrl = json["downloadUrl"] as String?;
     exposeAsAlternative = json["exposeAsAlternative"] as bool?;
     parentProjectFileId = json["parentProjectFileId"] as int?;
     alternateFileId = json["alternateFileId"] as int?;

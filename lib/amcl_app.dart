@@ -1,3 +1,5 @@
+import 'package:amcl/pages/test_page.dart';
+
 import 'pages/home_page.dart';
 import 'pages/accounts_page.dart';
 import 'pages/download_page.dart';
@@ -16,10 +18,11 @@ enum AMCLPage {
   games,
   downloads,
   settings,
+  test,
 }
 
 class AMCLState extends State<AMCLApp> {
-  AMCLPage page = AMCLPage.accounts;
+  AMCLPage page = AMCLPage.downloads;
 
   Map<String, LauncherUser> users = <String, LauncherUser>{};
   String? currentUUID;
@@ -67,6 +70,7 @@ class AMCLState extends State<AMCLApp> {
     if (page == AMCLPage.home) return HomePage(this);
     if (page == AMCLPage.accounts) return AccountsPage(this);
     if (page == AMCLPage.downloads) return DownloadPage(this);
+    if (page == AMCLPage.test) return const TestPage();
     return null;
   }
 
