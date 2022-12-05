@@ -7,16 +7,16 @@ import '../../clients/curseforge/categories.dart';
 import '../../clients/curseforge/mods.dart';
 
 class ModManagerTab extends StatefulWidget {
-  AMCLState amclState;
+  AppState appState;
 
-  ModManagerTab(this.amclState, {super.key});
+  ModManagerTab(this.appState, {super.key});
 
   @override
   State<StatefulWidget> createState() => ModManagerState();
 }
 
 class ModManagerState extends State<ModManagerTab> {
-  AMCLState get amclState => widget.amclState;
+  AppState get amclState => widget.appState;
   late CurseForgeClient _cfapi;
   late TextEditingController _keywordsController;
 
@@ -24,6 +24,7 @@ class ModManagerState extends State<ModManagerTab> {
   Map<int, VersionTypeInfo> _versionTypes = <int, VersionTypeInfo>{};
   Map<String, String> _gameVersions = <String, String>{};
   String _keywords = "";
+  bool removeEnglish = true;
 
   static const Map<int, String> _sortFields = <int, String>{
     1: "功能（Featured）",
@@ -51,6 +52,12 @@ class ModManagerState extends State<ModManagerTab> {
   Map<int, MapEntry<int, String>> get _sortFieldItems {
     var items = <int, MapEntry<int, String>>{};
     for (var entry in _sortFields.entries) {
+      if (removeEnglish) {
+        int index = entry.value.indexOf("（");
+        if (index > 0) {
+          entry = MapEntry(entry.key, entry.value.substring(0, index));
+        }
+      }
       items[entry.key] = entry;
     }
     return items;
@@ -59,6 +66,13 @@ class ModManagerState extends State<ModManagerTab> {
   Map<String, MapEntry<String, String>> get _sortOrderItems {
     var items = <String, MapEntry<String, String>>{};
     for (var entry in _sortOrders.entries) {
+      items[entry.key] = entry;
+      if (removeEnglish) {
+        int index = entry.value.indexOf("（");
+        if (index > 0) {
+          entry = MapEntry(entry.key, entry.value.substring(0, index));
+        }
+      }
       items[entry.key] = entry;
     }
     return items;
@@ -83,6 +97,8 @@ class ModManagerState extends State<ModManagerTab> {
 
   @override
   void initState() {
+    super.initState();
+
     _cfapi = CurseForgeClient();
 
     _cfapi.getCategories(classId: CurseForgeClient.classIdMods).then((value) {
@@ -106,8 +122,12 @@ class ModManagerState extends State<ModManagerTab> {
     });
 
     _keywordsController = TextEditingController(text: _keywords);
+  }
 
-    super.initState();
+  @override
+  void dispose() {
+    _keywordsController.dispose();
+    super.dispose();
   }
 
   void _onBtnSearchClick() {
@@ -201,7 +221,7 @@ class ModManagerState extends State<ModManagerTab> {
     }
   }
 
-  DropdownButton buildDropdownMenu<K, V>(
+  Widget buildDropdownMenu<K, V>(
     Map<K, V> items,
     K? value,
     Function(V) menuItemBuilder,
@@ -234,9 +254,12 @@ class ModManagerState extends State<ModManagerTab> {
         Row(
           children: [
             const SizedBox(width: 100, child: Text("关键字")),
-            // TextField(
-            //   controller: _keywordsController,
-            // ),
+            SizedBox(
+                width: 256,
+                height: 40,
+                child: TextField(
+                  controller: _keywordsController,
+                )),
             const SizedBox(width: 16),
             IconButton(
               icon: const Icon(Icons.search),
@@ -345,12 +368,10 @@ class ModManagerState extends State<ModManagerTab> {
   Widget buildResult(Mod mod) {
     List<Widget> categoryIcons = <Widget>[];
     for (var category in mod.categories) {
-      categoryIcons.add(
-        Container(
+      categoryIcons.add(Container(
           margin: const EdgeInsets.only(left: 2),
-          child: Image(image: NetworkImage(category.iconUrl), width: 32, height: 32)
-        )
-      );
+          child: Image(
+              image: NetworkImage(category.iconUrl), width: 32, height: 32)));
     }
 
     return Container(
@@ -363,13 +384,19 @@ class ModManagerState extends State<ModManagerTab> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image(image: NetworkImage(mod.logo.url), width: 64, height: 64,),
+          Image(
+            image: NetworkImage(mod.logo.url),
+            width: 64,
+            height: 64,
+          ),
           const SizedBox(width: 5),
-          Expanded(child: Column(
+          Expanded(
+              child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text("${mod.mainAuthor.name} / ${mod.name}"),
-              Text("#${mod.id} / @${mod.slug} 下载量：${mod.downloadCount}", style: const TextStyle(color: Colors.grey)),
+              Text("#${mod.id} / @${mod.slug} 下载量：${mod.downloadCount}",
+                  style: const TextStyle(color: Colors.grey)),
               Text(mod.summary, style: const TextStyle(color: Colors.grey)),
             ],
           )),
@@ -379,17 +406,23 @@ class ModManagerState extends State<ModManagerTab> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Row(children: [
-                ElevatedButton.icon(icon: const Icon(Icons.download), label: const Text("下载"), onPressed: () {}),
+                ElevatedButton.icon(
+                    icon: const Icon(Icons.download),
+                    label: const Text("下载"),
+                    onPressed: () {}),
                 const SizedBox(width: 5),
-                ElevatedButton.icon(icon: const Icon(Icons.star), label: const Text("收藏"), onPressed: () {}),
+                ElevatedButton.icon(
+                    icon: const Icon(Icons.star),
+                    label: const Text("收藏"),
+                    onPressed: () {}),
               ]),
-              
               const SizedBox(height: 5),
               Flex(
                 direction: Axis.horizontal,
                 children: categoryIcons,
               )
-          ],),
+            ],
+          ),
         ],
       ),
     );

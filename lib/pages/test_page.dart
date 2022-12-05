@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
-class TestPage extends StatelessWidget {
-  const TestPage({super.key});
+import 'base_page.dart';
+
+class TestPage extends BasePage {
+  TestPage(super.appState, {super.key});
 
   Widget buildMenu() {
     return SizedBox(
@@ -101,6 +103,40 @@ class TestPage extends StatelessWidget {
           // ),
         ],
       ),
+    );
+  }
+
+  @override
+  State<StatefulWidget> createState() => TestPageState();
+}
+
+class TestPageState extends BasePageState {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget buildBody(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(
+          width: 256,
+          height: 80,
+          child: TextField(
+            controller: _controller,
+          ),
+        ),
+      ],
     );
   }
 }

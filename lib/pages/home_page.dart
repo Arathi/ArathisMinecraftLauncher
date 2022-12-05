@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../models.dart';
 import '../amcl_app.dart';
 import '../components/menus.dart';
+import 'base_page.dart';
 
 class MainMenu extends BaseMenu {
-  MainMenu(AMCLState state, {Key? key}) : super(state, key: key);
+  MainMenu(AppState state, {Key? key}) : super(state, key: key);
 
-  Widget buildCurrentUser(LauncherUser? user) {
+  Widget buildCurrentUser(BuildContext context, LauncherUser? user) {
     String userName;
     String? description;
     if (user != null) {
@@ -19,10 +21,14 @@ class MainMenu extends BaseMenu {
       Icons.people,
       userName,
       description: description,
+      onClick: () {
+        print("点击用户菜单项");
+        Navigator.pushNamed(context, "/accounts");
+      },
     );
   }
 
-  Widget buildCurrentGame(Game? game) {
+  Widget buildCurrentGame(BuildContext context, Game? game) {
     String gameName;
     String? description;
     if (game != null) {
@@ -35,6 +41,9 @@ class MainMenu extends BaseMenu {
       Icons.gamepad,
       gameName,
       description: description,
+      onClick: () {
+        print("点击游戏菜单项");
+      },
     );
   }
 
@@ -43,16 +52,16 @@ class MainMenu extends BaseMenu {
     return Container(
       width: 256,
       color: const Color(0x80FFFFFF),
-      padding: EdgeInsets.fromLTRB(16, 32, 16, 32),
+      padding: const EdgeInsets.fromLTRB(16, 32, 16, 32),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         const Text("账户"),
         const Divider(),
-        buildCurrentUser(state.currentUser),
+        buildCurrentUser(context, appState.currentUser),
         const SizedBox(height: 32),
         // -----
         const Text("游戏"),
         const Divider(),
-        buildCurrentGame(state.currentGame),
+        buildCurrentGame(context, appState.currentGame),
         ClickableMenuItem.icon(
           Icons.menu,
           "版本列表",
@@ -62,6 +71,7 @@ class MainMenu extends BaseMenu {
           Icons.download,
           "下载",
           iconSize: 24,
+          onClick: () => Navigator.pushNamed(context, "/downloads/mods"),
         ),
         const SizedBox(height: 32),
         // -----
@@ -77,19 +87,36 @@ class MainMenu extends BaseMenu {
   }
 }
 
-class HomePage extends StatelessWidget {
-  AMCLState state;
+class HomePage extends BasePage {
+  HomePage(super.appState, {super.key});
 
-  HomePage(this.state, {super.key});
+  @override
+  State<StatefulWidget> createState() => HomePageState();
 
   @override
   Widget build(BuildContext context) {
-    String userName =
-        (state.currentUser != null) ? state.currentUser!.name : "请创建或选择用户";
+    String userName = (appState.currentUser != null)
+        ? appState.currentUser!.name
+        : "请创建或选择用户";
     return Row(children: [
-      MainMenu(state),
+      MainMenu(appState),
       const SizedBox(width: 10),
       Center(child: Text("欢迎，$userName")),
     ]);
+  }
+}
+
+class HomePageState extends BasePageState<HomePage> {
+  @override
+  Widget buildMenu(BuildContext context) {
+    return MainMenu(appState);
+  }
+
+  @override
+  Widget buildBody(BuildContext context) {
+    String userName = (appState.currentUser != null)
+        ? appState.currentUser!.name
+        : "请创建或选择用户";
+    return Center(child: Text("欢迎，$userName"));
   }
 }

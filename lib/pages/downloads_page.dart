@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
 
 import '../components/menus.dart';
-import '../amcl_app.dart';
+import 'base_page.dart';
 import 'tabs/mod_manager_tab.dart';
 
-class DownloadPageMenu extends BaseMenu {
-  DownloadPageMenu(super.state, {super.key});
+class DownloadsPageMenu extends BaseMenu {
+  DownloadsPageMenu(super.state, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 256,
       color: const Color(0x80FFFFFF),
-      padding: EdgeInsets.fromLTRB(16, 16, 16, 16),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(
           children: [
             IconButton(
-              onPressed: () => state.setPage(AMCLPage.home),
+              onPressed: () {
+                Navigator.pop(context);
+              },
               icon: const Icon(Icons.arrow_back),
             ),
             const Text("下载"),
@@ -31,11 +33,13 @@ class DownloadPageMenu extends BaseMenu {
           Icons.games,
           "游戏",
           iconSize: 24,
+          onClick: () => Navigator.pushNamed(context, "/downloads/games"),
         ),
         ClickableMenuItem.icon(
           Icons.add_box,
           "整合包",
           iconSize: 24,
+          onClick: () => Navigator.pushNamed(context, "/downloads/modPacks"),
         ),
         const SizedBox(height: 32),
         // -----
@@ -45,15 +49,19 @@ class DownloadPageMenu extends BaseMenu {
           Icons.view_module,
           "模组",
           iconSize: 24,
+          onClick: () => Navigator.pushNamed(context, "/downloads/mods"),
         ),
         ClickableMenuItem.icon(
           Icons.source,
           "资源包",
+          onClick: () =>
+              Navigator.pushNamed(context, "/downloads/resourcePacks"),
           iconSize: 24,
         ),
         ClickableMenuItem.icon(
           Icons.star,
           "世界",
+          onClick: () => Navigator.pushNamed(context, "/downloads/worlds"),
           iconSize: 24,
         ),
         const SizedBox(height: 32),
@@ -64,49 +72,38 @@ class DownloadPageMenu extends BaseMenu {
           Icons.event_note,
           "JDK",
           iconSize: 24,
+          onClick: () => Navigator.pushNamed(context, "/downloads/jdks"),
         ),
       ]),
     );
   }
 }
 
-enum DownloadTab {
-  games,
-  modPacks,
-  modManager,
-  resourcePacks,
-  worlds,
-}
+class DownloadsPage extends BasePage {
+  String route;
 
-class DownloadPage extends StatefulWidget {
-  AMCLState state;
-
-  DownloadPage(this.state, {super.key});
+  DownloadsPage(super.appState, this.route, {super.key});
 
   @override
-  State<StatefulWidget> createState() => DownloadPageState();
+  State<StatefulWidget> createState() => DownloadsPageState();
 }
 
-class DownloadPageState extends State<DownloadPage> {
-  DownloadTab _tab = DownloadTab.modManager;
-
-  void switchTab(DownloadTab tab) => setState(() => _tab = tab);
-
+class DownloadsPageState extends BasePageState<DownloadsPage> {
   Widget buildTab() {
-    if (_tab == DownloadTab.modManager) {
-      return ModManagerTab(widget.state);
+    switch (widget.route) {
+      case "/downloads/mods":
+        return ModManagerTab(appState);
     }
     return const Text("下载");
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Row(children: [
-      DownloadPageMenu(widget.state),
-      const SizedBox(width: 10),
-      Expanded(
-        child: buildTab(),
-      ),
-    ]);
+  Widget buildMenu(BuildContext context) {
+    return DownloadsPageMenu(appState);
+  }
+
+  @override
+  Widget buildBody(BuildContext context) {
+    return Expanded(child: buildTab());
   }
 }

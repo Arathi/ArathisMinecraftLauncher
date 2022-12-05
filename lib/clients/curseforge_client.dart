@@ -1,10 +1,13 @@
 import 'package:dio/dio.dart';
 import 'dart:io' show Platform;
+import 'dart:math';
 
 import 'curseforge/versions.dart';
 import 'curseforge/categories.dart';
 import 'curseforge/mods.dart';
 import 'curseforge/mod_files.dart';
+
+import '../util/version.dart';
 
 class CurseForgeClient {
   late Dio _dio;
@@ -113,6 +116,9 @@ class CurseForgeClient {
         print("无效的版本类型ID：${vt.id}");
         continue;
       }
+      if (vt.name.startsWith("Minecraft ")) {
+        versions.sort(_compareVersion);
+      }
 
       var info = VersionTypeInfo(vt, versions);
       infos.add(info);
@@ -120,7 +126,30 @@ class CurseForgeClient {
     print("数据合并完成！");
     print("版本类型信息数量：${infos.length}");
 
+    infos.sort(_compareType);
     return infos;
+  }
+
+  int _compareType(VersionTypeInfo left, VersionTypeInfo right) {
+    if (left.name.startsWith("Minecraft ") &&
+        right.name.startsWith("Minecraft ")) {
+      var leftVersion = Version(left.name.substring(10));
+      var rightVersion = Version(right.name.substring(10));
+      return -leftVersion.compareTo(rightVersion);
+    } else if (left.name.startsWith("Minecraft ") &&
+        !right.name.startsWith("Minecraft ")) {
+      return -1;
+    } else if (!left.name.startsWith("Minecraft ") &&
+        right.name.startsWith("Minecraft ")) {
+      return 1;
+    }
+    return left.name.compareTo(right.name);
+  }
+
+  int _compareVersion(String left, String right) {
+    var leftVersion = Version(left);
+    var rightVersion = Version(right);
+    return -leftVersion.compareTo(rightVersion);
   }
 
   Future<List<Category>> getCategories({

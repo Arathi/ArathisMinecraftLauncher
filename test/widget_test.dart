@@ -8,7 +8,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:amcl/main.dart';
 import 'package:amcl/my_app.dart';
 
 void main() {

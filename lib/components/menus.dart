@@ -4,7 +4,7 @@ import '../amcl_app.dart';
 
 class ClickableMenuItem extends StatelessWidget {
   Widget? item;
-  Function? onClick;
+  void Function()? onClick;
 
   ClickableMenuItem(this.item, {this.onClick, super.key});
 
@@ -62,12 +62,15 @@ class ClickableMenuItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(child: item);
+    return GestureDetector(
+      child: item,
+      onTap: onClick,
+    );
   }
 }
 
 abstract class BaseMenu extends StatelessWidget {
-  AMCLState state;
+  AppState appState;
 
-  BaseMenu(this.state, {super.key});
+  BaseMenu(this.appState, {super.key});
 }

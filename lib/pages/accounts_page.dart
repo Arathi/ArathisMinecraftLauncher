@@ -2,6 +2,8 @@ import 'package:amcl/amcl_app.dart';
 import 'package:amcl/components/menus.dart';
 import 'package:flutter/material.dart';
 
+import 'base_page.dart';
+
 class CreateAccountMenu extends BaseMenu {
   CreateAccountMenu(super.state, {super.key});
 
@@ -15,7 +17,7 @@ class CreateAccountMenu extends BaseMenu {
         Row(
           children: [
             IconButton(
-              onPressed: () => state.setPage(AMCLPage.home),
+              onPressed: () => Navigator.pop(context),
               icon: const Icon(Icons.arrow_back),
             ),
             Text("账户"),
@@ -49,23 +51,17 @@ class CreateAccountMenu extends BaseMenu {
   }
 }
 
-class AccountsPage extends StatefulWidget {
-  AMCLState state;
-
-  AccountsPage(this.state, {super.key});
+class AccountsPage extends BasePage {
+  AccountsPage(super.appState, {super.key});
 
   @override
   State<StatefulWidget> createState() => AccountsPageState();
 }
 
-class AccountsPageState extends State<AccountsPage> {
+class AccountsPageState extends BasePageState<AccountsPage> {
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        CreateAccountMenu(widget.state),
-        const SizedBox(width: 10),
-      ],
-    );
-  }
+  Widget buildMenu(BuildContext context) => CreateAccountMenu(appState);
+
+  @override
+  Widget buildBody(BuildContext context) => const Center(child: Text("用户"));
 }

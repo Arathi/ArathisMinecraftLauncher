@@ -1,29 +1,19 @@
 import 'package:amcl/pages/test_page.dart';
 
+import 'models.dart';
 import 'pages/home_page.dart';
 import 'pages/accounts_page.dart';
-import 'pages/download_page.dart';
+import 'pages/downloads_page.dart';
 import 'package:flutter/material.dart';
 
 class AMCLApp extends StatefulWidget {
   const AMCLApp({super.key});
 
   @override
-  State<StatefulWidget> createState() => AMCLState();
+  State<StatefulWidget> createState() => AppState();
 }
 
-enum AMCLPage {
-  home,
-  accounts,
-  games,
-  downloads,
-  settings,
-  test,
-}
-
-class AMCLState extends State<AMCLApp> {
-  AMCLPage page = AMCLPage.downloads;
-
+class AppState extends State<AMCLApp> {
   Map<String, LauncherUser> users = <String, LauncherUser>{};
   String? currentUUID;
 
@@ -44,6 +34,8 @@ class AMCLState extends State<AMCLApp> {
     return null;
   }
 
+  late GlobalKey<NavigatorState> _navigator;
+
   @override
   void initState() {
     // TODO 从本地文件中加载用户信息
@@ -60,65 +52,32 @@ class AMCLState extends State<AMCLApp> {
     Game game = Game("1.19.2(Forge)", null);
     games[game.name] = game;
     currentGameName = game.name;
+
+    _navigator = GlobalKey();
+
+    super.initState();
   }
 
-  void setPage(AMCLPage page) {
-    setState(() => this.page = page);
-  }
-
-  Widget? buildPage() {
-    if (page == AMCLPage.home) return HomePage(this);
-    if (page == AMCLPage.accounts) return AccountsPage(this);
-    if (page == AMCLPage.downloads) return DownloadPage(this);
-    if (page == AMCLPage.test) return const TestPage();
-    return null;
+  Map<String, WidgetBuilder> router(BuildContext context) {
+    Map<String, WidgetBuilder> router = <String, WidgetBuilder>{
+      "/home": (context) => HomePage(this),
+      "/accounts": (context) => AccountsPage(this),
+      "/downloads/mods": (context) => DownloadsPage(this, "/downloads/mods"),
+      "/test": (context) => TestPage(this),
+    };
+    return router;
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Arathis Minecraft Launcher",
+      navigatorKey: _navigator,
+      routes: router(context),
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        // backgroundColor: Colors.amber
       ),
-      home: Scaffold(
-          body: Container(
-        decoration: const BoxDecoration(
-            image: DecorationImage(
-          image: AssetImage("assets/background.jpg"),
-          fit: BoxFit.cover,
-        )),
-        child: buildPage(),
-      )),
+      initialRoute: "/downloads/mods",
     );
   }
-}
-
-enum LauncherUserType {
-  // 离线用户
-  offline,
-
-  // 在线用户
-  online,
-
-  // 第三方平台用户
-  thirdParty
-}
-
-class LauncherUser {
-  String uuid;
-  String name;
-  String icon;
-  LauncherUserType type;
-
-  LauncherUser(this.uuid, this.name, this.icon,
-      {this.type = LauncherUserType.offline});
-}
-
-class Game {
-  String name;
-  dynamic icon;
-
-  Game(this.name, this.icon);
 }
