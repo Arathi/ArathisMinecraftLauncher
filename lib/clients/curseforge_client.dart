@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'dart:io' show Platform;
-import 'dart:math';
 
 import 'curseforge/versions.dart';
 import 'curseforge/categories.dart';

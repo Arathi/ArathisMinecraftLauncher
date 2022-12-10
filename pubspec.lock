@@ -36,6 +36,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.16.0"
+  community_material_icon:
+    dependency: "direct main"
+    description:
+      name: community_material_icon
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "5.9.55"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -74,6 +81,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  font_awesome_flutter:
+    dependency: "direct main"
+    description:
+      name: font_awesome_flutter
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "10.3.0"
   http_parser:
     dependency: transitive
     description:
@@ -81,6 +95,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "4.0.2"
+  ionicons:
+    dependency: "direct main"
+    description:
+      name: ionicons
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.2.1"
   lints:
     dependency: transitive
     description:
@@ -88,6 +109,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.0.1"
+  logging:
+    dependency: "direct main"
+    description:
+      name: logging
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.1.0"
   matcher:
     dependency: transitive
     description:
@@ -186,3 +214,4 @@ packages:
     version: "2.1.2"
 sdks:
   dart: ">=2.18.5 <3.0.0"
+  flutter: ">=1.17.0"

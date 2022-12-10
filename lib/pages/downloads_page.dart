@@ -1,4 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:ionicons/ionicons.dart';
+import 'package:community_material_icon/community_material_icon.dart';
 
 import '../components/menus.dart';
 import 'base_page.dart';
@@ -30,13 +34,13 @@ class DownloadsPageMenu extends BaseMenu {
         const Text("新游戏"),
         const Divider(),
         ClickableMenuItem.icon(
-          Icons.games,
+          CupertinoIcons.gamecontroller_fill,
           "游戏",
           iconSize: 24,
           onClick: () => Navigator.pushNamed(context, "/downloads/games"),
         ),
         ClickableMenuItem.icon(
-          Icons.add_box,
+          CupertinoIcons.cube_box_fill,
           "整合包",
           iconSize: 24,
           onClick: () => Navigator.pushNamed(context, "/downloads/modPacks"),
@@ -46,20 +50,20 @@ class DownloadsPageMenu extends BaseMenu {
         const Text("游戏内容"),
         const Divider(),
         ClickableMenuItem.icon(
-          Icons.view_module,
+          Icons.extension,
           "模组",
           iconSize: 24,
           onClick: () => Navigator.pushNamed(context, "/downloads/mods"),
         ),
         ClickableMenuItem.icon(
-          Icons.source,
+          Ionicons.folder,
           "资源包",
           onClick: () =>
               Navigator.pushNamed(context, "/downloads/resourcePacks"),
           iconSize: 24,
         ),
         ClickableMenuItem.icon(
-          Icons.star,
+          Ionicons.earth_sharp,
           "世界",
           onClick: () => Navigator.pushNamed(context, "/downloads/worlds"),
           iconSize: 24,
@@ -69,7 +73,8 @@ class DownloadsPageMenu extends BaseMenu {
         const Text("运行环境"),
         const Divider(),
         ClickableMenuItem.icon(
-          Icons.event_note,
+          // CommunityMaterialIcons.language_java,
+          const FaIcon(FontAwesomeIcons.java).icon,
           "JDK",
           iconSize: 24,
           onClick: () => Navigator.pushNamed(context, "/downloads/jdks"),

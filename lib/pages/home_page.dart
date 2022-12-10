@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../models.dart';
@@ -63,7 +64,7 @@ class MainMenu extends BaseMenu {
         const Divider(),
         buildCurrentGame(context, appState.currentGame),
         ClickableMenuItem.icon(
-          Icons.menu,
+          CupertinoIcons.list_bullet,
           "版本列表",
           iconSize: 24,
         ),
