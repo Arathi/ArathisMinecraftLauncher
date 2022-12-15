@@ -1,5 +1,6 @@
 import 'package:amcl/pages/test_page.dart';
 
+import 'launcher/launcher.dart';
 import 'models.dart';
 import 'pages/home_page.dart';
 import 'pages/accounts_page.dart';
@@ -14,6 +15,7 @@ class AMCLApp extends StatefulWidget {
 }
 
 class AppState extends State<AMCLApp> {
+  Launcher launcher = Launcher();
   Map<String, LauncherUser> users = <String, LauncherUser>{};
   String? currentUUID;
 

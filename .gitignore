@@ -42,3 +42,9 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# generated
+lib/*.mapper.g.dart
+lib/*.reflectable.dart
+test/*.mapper.g.dart
+test/*.reflectable.dart

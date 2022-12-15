@@ -1,60 +1,76 @@
+import 'package:flutter_test/flutter_test.dart';
 import 'package:amcl/clients/curseforge_client.dart';
+import 'package:amcl/clients/curseforge_models.dart';
+import 'package:logger/logger.dart';
 
-import 'package:amcl/clients/curseforge/versions.dart';
+import 'package:amcl/main.mapper.g.dart';
+import 'package:amcl/main.reflectable.dart';
 
-void main() async {
+void main() {
+  initializeReflectable();
+  initializeJsonMapper();
+
+  var logger = Logger();
   var client = CurseForgeClient();
-  await testGetModFile(client);
-}
 
-Future testGetVersions(CurseForgeClient client) async {
-  var versionsList = await client.getVersions();
-  for (var vs in versionsList) {
-    print("读取版本类型：${vs.type}，版本数量：${vs.versions.length}");
-  }
-}
+  test('用例-1-1-获取游戏版本 getVersions', () async {
+    var versions = await client.getVersions();
+    logger.i("获取游戏版本${versions.length}个");
+  });
 
-Future testGetVersionTypes(CurseForgeClient client) async {
-  var types = await client.getVersionTypes();
-  for (var vt in types) {
-    print("读取版本类型：${vt.id}，版本类型名称：${vt.name}");
-  }
-}
+  test('用例-1-2-获取版本类型 getVersionTypes', () async {
+    var types = await client.getVersionTypes();
+    logger.i("获取版本类型${types.length}个");
+  });
 
-Future testGetVersionTypeInfos(CurseForgeClient client) async {
-  var infos = await client.getVersionTypeInfos();
-  for (var info in infos) {
-    print("读取版本类型：${info.id}，版本名称：${info.name}，版本数量：${info.versions.length}");
-  }
-}
+  test('用例-1-3-获取版本分类信息 getVersionTypeInfos', () async {
+    var infos = await client.getVersionTypeInfos();
+    logger.i("获取分类信息${infos.length}个");
+  });
 
-Future testGetCategories(CurseForgeClient client) async {
-  var cats = await client.getCategories();
-  for (var cat in cats) {
-    print("分类信息：$cat");
-  }
-}
+  test('用例-2-1-获取分类 getCategories', () async {
+    var cats = await client.getCategories(classId: null);
+    logger.i("获取分类${cats.length}个");
 
-Future testSearchMods(CurseForgeClient client) async {
-  var mods = await client.searchMods(slug: "jei");
-  for (var mod in mods) {
-    print("模组信息：$mod");
-  }
-}
+    var modCats = await client.getCategories(
+      classId: CurseForgeClient.classIdMods,
+    );
+    logger.i("获取分类${modCats.length}个");
+  });
 
-Future testGetModFile(CurseForgeClient client) async {
-  int modId = 245755;
-  int fileId = 3830849;
-  var modFile = await client.getModFile(modId, fileId);
-  if (modFile != null) {
-    print(modFile);
-  }
-}
+  test('用例-3-1-搜索模组 searchMods', () async {
+    logger.i("查询所有MOD");
+    var results = await client.searchMods();
+    logger.i("获得mod共${results.total}个，当前分页${results.count}个");
 
-Future testGetModFiles(CurseForgeClient client) async {
-  int modId = 238222; // jei
-  var modFiles = await client.getModFiles(modId);
-  for (var file in modFiles) {
-    print("模组文件信息：$file");
-  }
+    logger.i("查询1.19.2的Forge Mod");
+    results = await client.searchMods(
+      classId: CurseForgeClient.classIdMods,
+      gameVersion: "1.19.2",
+      modLoaderType: ModLoaderType.Forge,
+      sortField: ModsSearchSortField.Popularity,
+      sortOrder: ModsSearchSortOrder.desc,
+    );
+    logger.i("获得mod共${results.total}个，当前分页${results.count}个");
+  });
+
+  test('用例-3-1-1-根据slug搜索模组 searchMods(slug: "jei")', () async {
+    logger.i("查询jei");
+    var results = await client.searchMods(slug: "jei");
+    logger.i("获得mod共${results.total}个，当前分页${results.count}个");
+  });
+
+  test('用例-3-2-根据ID获取模组 getMod', () async {
+    logger.i("查询245755/Waystones");
+    var waystones = await client.getMod(245755);
+    logger.i("获取MOD：${waystones.toString()}");
+  });
+
+  test('用例-3-3-根据多个ID获取模组列表 getMods', () {});
+
+  test('用例-4-1-获取ID根据模组文件 getModFile', () {});
+
+  test('用例-4-2-根据模组ID获取模组文件列表 getModFiles', () {});
+
+  test('用例-4-3-根据多个模组文件ID获取模组文件列表 getFiles', () {});
 }

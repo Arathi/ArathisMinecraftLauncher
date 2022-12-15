@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import '../../launcher/version_json.dart';
+
 class Launcher {
   // String get javaPath => r"C:\Java\graalvm-ce-java17-22.1.0\bin\java.exe";
   String get mainClass => "cpw.mods.bootstraplauncher.BootstrapLauncher";
@@ -14,8 +16,11 @@ class Launcher {
 
   String buildCommand(
     String javaPath,
-    String versionFile,
+    String versionPath,
+    String versionName,
   ) {
+    VersionJson versionJson = VersionJson.lazy(versionPath, versionName);
+    
     StringBuffer command = StringBuffer();
 
     // java绝对路径
@@ -38,12 +43,14 @@ class Launcher {
 
   void launch(
     String javaPath,
-    String versionFile,
+    String versionPath,
+    String versionName,
   ) {
     String command = buildCommand(
       javaPath,
-      versionFile,
+      versionPath,
+      versionName,
     );
-    Process.start(command, ['']);
+    Process.start(command, []);
   }
 }

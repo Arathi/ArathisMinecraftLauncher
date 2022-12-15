@@ -1,10 +1,9 @@
-import 'package:amcl/clients/curseforge/versions.dart';
 import 'package:flutter/material.dart';
 
 import '../../amcl_app.dart';
 import '../../clients/curseforge_client.dart';
-import '../../clients/curseforge/categories.dart';
-import '../../clients/curseforge/mods.dart';
+import '../../clients/curseforge_models.dart';
+import '../../clients/curseforge_responses.dart';
 
 class ModManagerTab extends StatefulWidget {
   AppState appState;
@@ -171,15 +170,15 @@ class ModManagerState extends State<ModManagerTab> {
         categoryId: categoryId,
         gameVersion: gameVersion,
         searchFilter: searchFilter,
-        sortField: sortField,
-        sortOrder: sortOrder,
-        modLoaderType: modLoaderType,
+        sortField: ModsSearchSortField.Popularity,  // TODO 暂时写死
+        sortOrder: ModsSearchSortOrder.desc,  // TODO 暂时写死
+        modLoaderType: ModLoaderType.Forge, // TODO 暂时写死
         gameVersionTypeId: gameVersionTypeId,
         slug: slug,
       )
           .then((value) {
-        print("获取搜索结果${value.length}个");
-        setState(() => results.addAll(value));
+        print("获取搜索结果${value.total}个");
+        setState(() => results.addAll(value.datas));
       });
     } else {
       print("根据ID获取模组");
@@ -385,7 +384,7 @@ class ModManagerState extends State<ModManagerTab> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Image(
-            image: NetworkImage(mod.logo.url),
+            image: NetworkImage(mod.logo!.url),
             width: 64,
             height: 64,
           ),

@@ -1,0 +1,11 @@
+targets:
+  $default:
+    builders:
+      reflectable:
+        generate_for:
+          - lib/main.dart
+      dart_json_mapper:
+        options:
+          iterables: List, Set, HashSet, Map, HashMap, UnmodifiableListView
+        generate_for:
+          - lib/main.dart
