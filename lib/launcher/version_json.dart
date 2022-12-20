@@ -2,12 +2,50 @@ import 'dart:io';
 
 import 'package:dart_json_mapper/dart_json_mapper.dart';
 
+typedef StringKeyMap = Map<String,dynamic>;
+
+@jsonSerializable
+class Os {
+  String name;
+  String? version;
+  String? arch;
+
+  Os(this.name, this.version, this.arch);
+
+  @override
+  String toString() {
+    var info = StringBuffer();
+    info.write(name);
+    if (version!=null) {
+      info.write("($version)");
+    }
+    return info.toString();
+  }
+}
+
 @jsonSerializable
 class Rule {
   String action;
   dynamic features;
+  Os? os;
 
-  Rule(this.action, this.features);
+  Rule(this.action, this.features, this.os);
+
+  @override
+  String toString() {
+    var info = StringBuffer();
+    info.write(action);
+    if (features != null && features is StringKeyMap) {
+      var map = features as StringKeyMap;
+      for (var entry in map.entries) {
+        info.write(" ${entry.key}=${entry.value}");
+      }
+    }
+    if (os != null) {
+      info.write(" os=$os");
+    }
+    return info.toString();
+  }
 }
 
 @jsonSerializable
@@ -39,6 +77,9 @@ class Argument {
         return "[${values.join(",")}]";
       }
       return "[]";
+    }
+    else if (rules.length == 1) {
+      return "<${rules[0]}>[${values.join(",")}]";
     }
     return "<${rules.length}.Rules>[${values.join(",")}]";
   }
@@ -164,8 +205,37 @@ class VersionJson {
     this.libraries,
     this.downloads,
   ) {
-    gameArguments = [];
-    jvmArguments = [];
+    parseArguments();
+  }
+
+  List<Argument> parseArgumentList(List<dynamic> list) {
+    List<Argument> args = <Argument>[];
+    for (var e in list) {
+      if (e is String) {
+        args.add(Argument.string(e));
+      }
+      else if (e is StringKeyMap) {
+        var arg = JsonMapper.deserialize<Argument>(e);
+        if (arg != null) {
+          args.add(arg);
+        }
+      }
+    }
+    return args;
+  }
+
+  void parseArguments() {
+    if (arguments is StringKeyMap) {
+      var game = arguments["game"];
+      if (game is List) {
+        gameArguments = parseArgumentList(game);
+      }
+
+      var jvm = arguments["jvm"];
+      if (jvm is List) {
+        jvmArguments = parseArgumentList(jvm);
+      }
+    }
   }
 
   VersionJson.lazy(this.dir, this.name);
@@ -180,7 +250,9 @@ class VersionJson {
     }
 
     id = ver.id;
-    arguments = ver.arguments;
+    // arguments = ver.arguments;
+    gameArguments = ver.gameArguments;
+    jvmArguments = ver.jvmArguments;
     jar = ver.jar;
     assetIndex = ver.assetIndex;
     assets = ver.assets;
